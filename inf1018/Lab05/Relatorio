@@ -1,0 +1,47 @@
+1) 
+	int b[2] ocupa 8 bytes, pois b é um vetor de inteiros com duas posicoes. int ocupa 4 bytes. logo 4 bytes * 2 = 8 bytes.
+	short a[2][3] ocupa 12 bytes, pois a é uma matriz de 2 linhas e 3 colunas. short ocupa 2 bytes. logo
+	2 bytes * 2 * 3 = 12 bytes.
+
+2)
+	Essa estrutura tem o tamanho de 12 bytes
+	O paddin está lá pois essa struct é formada por 3 tipos: int, short e int,
+	e a forma como o array é organizado é, ele só pode colocar novos tipos em 
+	areas da memoria multiplas do maior tipo. Nesse caso o maior é o int, ou seja
+	os valores só poderam ser armazenados em multiplos de 4. IIIISSXXIIII
+	
+3)
+a)
+	Tamanho: 12 Bytes
+	Esturtura: CXXXXIIIICXXXX
+
+b)
+	Tamanho: 16 Bytes
+	Esturtura: LLLLLLLLCXXXXXXX
+
+c)
+	Tamanho: 8 Bytes
+	Esturtura: IIIICCXX 
+
+d)
+	Tamanho: 24 Bytes
+	Esturtura: LLLLLLLLCXXXXXXXCXXXXXXX
+
+e)
+	Tamanho: 3 Bytes
+	Esturtura: CCC
+
+f)
+	Tamanho: 16 Bytes
+	Esturtura:SSXXIIIICCCXSSXX 
+
+g)
+	Tamanho: 8 Bytes
+    Esturtura se for int: IIIIXXXX
+	Esturtura se for char: CCCCCXXX
+
+h)
+	Tamanho: 6 Bytes
+	Esturtura se for short: SSXXXX
+	Estrutura se for char: CCCCCX
+

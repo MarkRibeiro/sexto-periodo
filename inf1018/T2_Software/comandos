@@ -1,0 +1,7 @@
+cd Documents/sexto_periodo/inf1018/T2_Software
+
+gcc -Wall -o gera_codigo gera_codigo.c gera_codigo.h main.c
+./gera_codigo
+
+gcc -c codigo1.s
+objdump -d codigo1.o

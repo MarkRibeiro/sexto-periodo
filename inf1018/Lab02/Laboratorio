@@ -1,0 +1,15 @@
+1. a)Tamanha de um inteiro = 4 bytes. Pelo fato dos bytes estarem organizados do mais significativo para o menos podemos concluir que os bytes estão ordenados no modelo little endian.
+
+1. b)Ao usar long int é alocado o dobro(8 bytes) do numero de bytes alocados para um int.
+
+1. c)Ao usar short int é alocado metade(2 bytes) do numero de bytes alocados para um int.
+
+1. d)Ao usar char a memoria alocada é igual a 1 byte. Tanto no uso do caractere quanto no uso do codigo ASCII é gauardado na memoria o mesmo valor. 
+
+1. e) 'A'= 65, ' '= 32, '\n'= 10, '$'= 36
+
+2. a)A funcao converte a string para seu valor inteiro correspondente. A cada interaçao "*s" assume o valor de um digito da string. A cada interacao "a" vai convertendo a string para seu valor inteiro.
+
+2. b)
+
+2. c)

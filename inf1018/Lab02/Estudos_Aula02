@@ -1,0 +1,95 @@
+Convertendo Bases
+-Base 2 -> Base 10
+Valor de cada digito * 2^sua posiçao +....
+
+ex: 10101001
+
+1*2^7 + 0*2^6 + 1*2^5 + 0*2^4 + 1*2^3 + 0*2^2 + 0*2^1 + 1*2^0
+128 + 0 + 32 + 0 + 8 + 0 + 0 + 1
+169
+
+-Base 16 -> Base 10
+Valor de cada digito * 16^sua posiçao +....
+
+ex: 3CDA
+
+3*16^3 + 12*16^2 + 13*16^1 + 10*16^0
+12288 + 3072 + 208 + 10
+15578
+
+OBS: na base 16 A=10, B=11, C=12, D=13, E=14, F=15
+
+-Base 16 -> Base 2
+Transforme cada digito em binario e depois junte tudo
+
+ex: 2C3D
+
+0010 1100 0011 1101
+
+-Base 2 ->Base 16
+Divida o numero em grupos de 4, converta cada quarteto para um digito da base 16.
+Depois junte tudo
+
+ex:10101001101011
+
+(00)10 1010 0110 1011
+   2 	A    6	  B
+
+OBS: se necessario adicione 0na frente de um grupo de numeros q n esteja com quarteto completo
+
+Divisoes sucessivas
+Outra forma de converter numeros entre bases é por meio de divisao
+
+-Base 10 -> Base 2
+Divida o valor inteiro pela base até dar 0
+junte todos os restos das divisoes ao contrario
+
+ex: 20
+
+20/2=10 resto=0
+10/2=5 resto=0
+5/2=2 resto=1
+2/2=1 resto=0
+1/2=0 resto=1
+
+10100
+
+-Base 10 -> Base 16
+Divida o valor inteiro pela base até dar 0
+Converta os restos para a base junte todos os restos das divisoes ao contrario
+
+ex: 1200
+
+1200/16=75 resto=0
+75/16=4 resto=11
+4/16=0 resto=4
+
+4 11 0
+4  B 0
+
+4B0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1715/16=107 resta=3
+107/16=6 resta=11
+6/16=0 resto=6

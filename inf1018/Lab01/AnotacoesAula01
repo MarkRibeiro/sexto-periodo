@@ -1,0 +1,10 @@
+Comandos novos
+Compilando: gcc -Wall -o nome_do_executavel nome_do.c
+Rodando: ./nome_do_executavel
+Compilando arquivos dependentes: gcc -Wall -o nome_do_executavel primeiro.c segundo.c
+
+
+
+OBS:
+-Wall: Da avisos durante a compilaçao, caso exista algum erro.
+-o: Permite nomear o executavel

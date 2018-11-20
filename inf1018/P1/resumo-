@@ -1,0 +1,82 @@
+>>>Tipos de dados, bits e bytes
+char = 1 byte
+short = 2 bytes
+int = 4 bytes 
+long = 8 bytes
+
+1 byte ocupa 8 bits, ou seja:
+char = 8 bits
+short = 16 bits
+int = 32 bits
+long = 64 bits
+
+bits guardam apenas valores binarios.
+
+Os tipos tambem podem ser unsigned, quando colocamos um int por exemplo o computador assume
+que ele é signed ou seja, q ele tem sinal, mas quando usamos unsigned isso limita as possibilidades
+numericas do tipo a apenas numeros positivos.
+
+A forma que o comutador encontrou para quardar valores negativos é sacrificando seu bit mais a
+esquerda, pois esse ficaria guardando o sinal do numero. logo podemos concluir que um unsigned tem 
+mais possibilidase numericas do que um signed, visto que os signeds tem um bit a menos para guardar
+seus valores
+
+>>>Operaçoes
+
+Existem 3 operaçoe logicas para se fazer com bits. o e(&), o ou(|) e o shift(>>).
+
+O & e o | nada mais sao do q comparaçoes entre bits, porem com regras diferentes.
+
+O & vai comparar 2 conjuntos de bits, e todos os lugares onde forem 0 vao se manter. os unicos valores
+1 que iram se manter sao os que coincidem com outro 1.
+
+Ex:
+	10100101 & 00111000 = 00100000
+
+	1010 0101
+			&
+	0011 1000
+	---------
+	0010 0000
+
+O | vai comparar 2 conjuntos de bits, e todos os lugares onde forem 1 vao se manter. Os unicos valores
+0 que iram se manter sao os que coincidem com outro 0.
+
+Ex:
+	10100101 | 00111000 = 10111101
+
+	1010 0101
+			|
+	0011 1000
+	---------
+	1011 1101
+	
+O shift tem um porem, a operaçao shift anda com os bites, porem, ele reage de formas diferentes se ele
+for pra esquerda ou pra direita.
+
+Temos um char 1101 e queremos fazer um shift para a esquerda. ele simplesmente ira mover o numero de 
+bites desejados para a esquerda e colocar 0 nas posiçoes vazias. isso funciona igual tanto para signed 
+quanto pra unsigned
+
+Ex:
+	13 = 1101 << 2 
+	52 = 110100
+
+A surresa do shift é quando vc o usa para a direita, pois dependendo do seu tipo(signed ou unsigned) e se ele for positivo ou nao, o que entra no seu lado esquerdo muda.
+
+unsigned e signed positivo
+Quando for unsigned ou signed positivo o que entra na sua esquerda sempre sera 0
+
+Ex:
+	5 = 0101 >> 2
+	1 = 0001
+
+signed negativo
+Quando for signed negativo o que entra na sua esquerda sempre sera 1
+
+Ex:
+	-3 = 1101 >> 2
+	-1 = 1111
+	
+
+	 
