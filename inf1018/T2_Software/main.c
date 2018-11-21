@@ -5,7 +5,6 @@ int main(int argc, char *argv[]) {
   FILE *fp;
   void *code;
   funcp funcSBF;
-  int res;
 
   /* Abre o arquivo para leitura */
   fp = fopen("sbf", "r");
