@@ -34,10 +34,92 @@ int ret(char c,  int idx0, int posi)
 
 		case 'v':
 		{
+      codigo[posi]=0x8b;
+      codigo[posi+1]=0x45;
+
+      switch (idx0)
+      {
+        case 0:// -8(%rbp)
+        {
+          codigo[posi+2]=0xf8;
+
+          return 3;
+        }
+
+        case 1:// -12(%rbp)
+        {
+          codigo[posi+2]=0xf4;
+
+          return 3;
+        }
+
+        case 2:// -16(%rbp)
+        {
+          codigo[posi+2]=0xf0;
+
+          return 3;
+        }
+
+        case 3:// -20(%rbp)
+        {
+          codigo[posi+2]=0xec;
+
+          return 3;
+        }
+
+        case 4:// -24(%rbp)
+        {
+          codigo[posi+2]=0xe8;
+
+          return 3;
+        }
+
+      }
 		}	
 
 		case 'p':
 		{
+      codigo[posi]=0x8b;
+      codigo[posi+1]=0x45;
+
+      switch (idx0)
+      {
+        case 0:// -4(%rbp)
+        {
+          codigo[posi+2]=0xfc;
+
+          return 3;
+        }
+
+        case 1:// -8(%rbp)
+        {
+          codigo[posi+2]=0xf8;
+
+          return 3;
+        }
+
+        case 2:// -12(%rbp)
+        {
+          codigo[posi+2]=0xf4;
+
+          return 3;
+        }
+
+        case 3:// -16(%rbp)
+        {
+          codigo[posi+2]=0xf0;
+
+          return 3;
+        }
+
+        case 4:// -20(%rbp)
+        {
+          codigo[posi+2]=0xec;
+
+          return 3;
+        }
+
+      }
 		}	
 	}
   return 0;
@@ -45,8 +127,8 @@ int ret(char c,  int idx0, int posi)
 
 void gera_codigo (FILE *f, void **code, funcp *entry)
 {
-  	int line = 1, posi=0;
-  	int  c;
+  int line = 1, posi=0;
+  int  c;
 
 	
 	codigo=(unsigned char*)malloc(VALMAX * sizeof(char));
@@ -55,11 +137,11 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
 	{
     	switch (c) 
 		{
-      		case 'f': //function 	
+      case 'f': //function 	
 			{ 
-        		char c0;        		
+        char c0;        		
 				if (fscanf(f, "unction%c", &c0) != 1)
-          			error("comando invalido", line);
+          error("comando invalido", line);
 
 				codigo[posi]=0x55;
 				codigo[posi + 1]=0x48;
@@ -75,79 +157,81 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
         		
 				printf("function\n");
 				posi=posi+11;
-        		break;
-      		}
+        break;
+      }
 
-      		case 'e': //end
+      case 'e': //end
 			{ 
-        		char c0;
-        		if (fscanf(f, "nd%c", &c0) != 1)
-          			error("comando invalido", line);
+        char c0;
+        if (fscanf(f, "nd%c", &c0) != 1)
+          error("comando invalido", line);
 				
 				codigo[posi]=0xc9;
 				codigo[posi+1]=0xc3;
         
 				printf("end\n");
 				posi=posi+2;
-        		break;
-      		}
+        break;
+      }
 
-      		case 'r': //retorno incondicional 	
+      case 'r': //retorno incondicional 	
 			{  
-        		int idx0;
-        		char var0;
-        		if (fscanf(f, "et %c%d", &var0, &idx0) != 2) 
-          			error("comando invalido", line);
+        int idx0;
+        char var0;
+        if (fscanf(f, "et %c%d", &var0, &idx0) != 2) 
+          error("comando invalido", line);
         
 				posi=posi+ret(var0, idx0, posi);
 
 				printf("ret %c%d\n", var0, idx0);
-        		break;
-      		}
+        break;
+      }
 
-      		case 'z': //retorno condicional
+      case 'z': //retorno condicional
 			{  
-        		int idx0, idx1;
-        		char var0, var1;
-        		if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) 
-          			error("comando invalido", line);
+        int idx0, idx1;
+        char var0, var1;
+        if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) 
+          error("comando invalido", line);
         
 				printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
-        		break;
-      		}
+        break;
+      }
       
 			case 'v': //atribuicao
 			{  
-        		int idx0;
-        		char var0 = c, c0;
-        		if (fscanf(f, "%d = %c",&idx0, &c0) != 2)
-          			error("comando invalido",line);
+        int idx0;
+        char var0 = c, c0;
+        if (fscanf(f, "%d = %c",&idx0, &c0) != 2)
+          error("comando invalido",line);
 
-        		if (c0 == 'c') //call	
+        if (c0 == 'c') //call	
 				{ 
-          			int fp, idx1;
-          			char var1;
-          			if (fscanf(f, "all %d %c%d\n", &fp, &var1, &idx1) != 3)
-            			error("comando invalido",line);
+          int fp, idx1;
+          char var1;
+          if (fscanf(f, "all %d %c%d\n", &fp, &var1, &idx1) != 3)
+            error("comando invalido",line);
           
 					printf("%c%d = call %d %c%d\n",var0, idx0, fp, var1, idx1);
-        		}
-        		else //operacao aritmetica 	
-				{ 
-          			int idx1, idx2;
-          			char var1 = c0, var2, op;
-          			if (fscanf(f, "%d %c %c%d", &idx1, &op, &var2, &idx2) != 4)
-            			error("comando invalido", line);
-          
-					printf("%c%d = %c%d %c %c%d\n",
-                	var0, idx0, var1, idx1, op, var2, idx2);
-        		}
-        		break;
-      		}
-      		default: error("comando desconhecido", line);
-    	}
-   		line ++;
-    	fscanf(f, " ");
-  	}
-}
+        }
 
+        else //operacao aritmetica 	
+				{ 
+          int idx1, idx2;
+          char var1 = c0, var2, op;
+          if (fscanf(f, "%d %c %c%d", &idx1, &op, &var2, &idx2) != 4)
+            error("comando invalido", line);
+        
+					printf("%c%d = %c%d %c %c%d\n", var0, idx0, var1, idx1, op, var2, idx2);
+        }
+
+        break;
+      }
+
+      default: error("comando desconhecido", line);
+    }
+
+   	line ++;
+    fscanf(f, " ");
+  }
+}

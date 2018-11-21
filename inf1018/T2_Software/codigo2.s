@@ -6,24 +6,9 @@ foo:
   movq %rsp, %rbp
   subq $32, %rsp
   movl %edi, -4(%rbp)	
-/*
-  movl %edi, %esi
-  movl %edi, %eax
 
-  addl %edi, %esi 
-  addl %edi, %eax
-
-  subl %edi, %esi 
-  subl %edi, %eax
-
-  imull %edi, %esi 
-  imull %edi, %eax
-*/
-
-  movl $1, %eax
-  ret
-
-
+  movl $10, -12(%rbp)
+  movl $1, %eax 
 
   leave
   ret
