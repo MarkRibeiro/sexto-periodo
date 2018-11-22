@@ -1,0 +1,217 @@
+switch :
+{
+	case v:
+	{
+		switch :
+		{
+			case '+':
+			{
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '-':
+			{
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '*':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+		}
+	}
+
+	case 'p':
+	{
+		switch :
+		{
+			case '+':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '-':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '*':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+		}
+	
+	}
+
+	case '$':
+	{
+		switch :
+		{
+			case '+':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '-':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+
+			case '*':
+			{
+				
+				switch :
+				{
+					case 'v':
+					{
+						
+					}
+
+					case 'p':
+					{
+			
+					}
+
+					case '$':
+					{
+			
+					}
+				}
+			}
+		}
+	}
+}
