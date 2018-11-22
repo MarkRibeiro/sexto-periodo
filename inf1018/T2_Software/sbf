@@ -1,3 +1,4 @@
 function
-ret $100
+v0 = v0 + $2
+ret 
 end

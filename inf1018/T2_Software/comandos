@@ -1,7 +1,7 @@
 cd Documents/sexto-periodo/inf1018/T2_Software
 cd sexto-periodo/inf1018/T2_Software
 
-gcc -Wall -o gera_codigo gera_codigo.c gera_codigo.h main.c
+gcc -Wall -Wa,--execstack -o gera_codigo gera_codigo.c gera_codigo.h main.c
 ./gera_codigo
 
 gcc -c codigo1.s
