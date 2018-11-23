@@ -11,6 +11,158 @@ static void error (const char *msg, int line)
   exit(EXIT_FAILURE);
 }
 
+int operacao (char var1, int idx1, char op, char var2, int idx2, int posi)
+{
+  switch (var1)
+  {
+    case 'p':
+    {
+      codigo[posi++]=0x8b;
+      codigo[posi++]=0x55;
+      codigo[posi++]=0xe8;
+
+      break;
+    }
+
+    case 'v':
+    {
+      codigo[posi++]=0x8b;
+      codigo[posi++]=0x55;
+      codigo[posi++]=0xfc -4* idx1;
+
+      break;
+    }
+
+    case '$':
+    {
+      codigo[posi++]=0xba;
+      codigo[posi++]=idx1 & 0xff;
+      codigo[posi++]=(idx1 >> 8) & 0xff;
+      codigo[posi++]=(idx1 >> 16) & 0xff;
+      codigo[posi++]=(idx1 >> 24) & 0xff;
+
+      break;
+    }
+  }
+
+  switch (op)
+  {
+    case '+':
+    {
+      switch (var2)
+      {
+        case 'p':
+        {
+          codigo[posi++]=0x03;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xe8;
+
+          break;
+        }
+
+        case 'v':
+        {
+          codigo[posi++]=0x03;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xfc -4* idx2;
+
+          break;
+        }
+
+        case '$':
+        {
+          codigo[posi++]=0x81;
+          codigo[posi++]=0xc2;
+          codigo[posi++]=idx2 & 0xff;
+          codigo[posi++]=(idx2 >> 8) & 0xff;
+          codigo[posi++]=(idx2 >> 16) & 0xff;
+          codigo[posi++]=(idx2 >> 24) & 0xff;
+
+          break;
+        }
+      }
+      break;
+    }
+
+    case '-':
+    {
+      switch (var2)
+      {
+        case 'p':
+        {
+          codigo[posi++]=0x2b;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xe8;
+
+          break;
+        }
+
+        case 'v':
+        {
+          codigo[posi++]=0x2b;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xfc -4* idx2;
+
+          break;
+        }
+
+        case '$':
+        {
+          codigo[posi++]=0x81;
+          codigo[posi++]=0xea;
+          codigo[posi++]=idx2 & 0xff;
+          codigo[posi++]=(idx2 >> 8) & 0xff;
+          codigo[posi++]=(idx2 >> 16) & 0xff;
+          codigo[posi++]=(idx2 >> 24) & 0xff;
+
+          break;
+        }
+      }
+      break;
+    }
+
+    case '*':
+    {
+      switch (var2)
+      {
+        case 'p':
+        {
+          codigo[posi++]=0x0f;
+          codigo[posi++]=0xaf;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xe8;
+
+          break;
+        }
+
+        case 'v':
+        {
+          codigo[posi++]=0x0f;
+          codigo[posi++]=0xaf;
+          codigo[posi++]=0x55;
+          codigo[posi++]=0xfc -4* idx2;
+
+          break;
+        }
+
+        case '$':
+        {
+          codigo[posi++]=0x69;
+          codigo[posi++]=0xd2;
+          codigo[posi++]=idx2 & 0xff;
+          codigo[posi++]=(idx2 >> 8) & 0xff;
+          codigo[posi++]=(idx2 >> 16) & 0xff;
+          codigo[posi++]=(idx2 >> 24) & 0xff;
+
+          break;
+        }
+      }
+      break;
+    }
+  }
+  return posi;
+}
+
 int zret(char var0, int idx0, char var1, int idx1, int posi)
 {
   switch (var0)
@@ -132,10 +284,10 @@ int ret(char var0,  int idx0, int posi)
   exit(1);
 }
 
-void gera_codigo (FILE *f, void **code, funcp *entry)
+int gera_codigo (FILE *f, void **code, funcp *entry)
 {
-  int line = 1, posi=0;
-  int  c;
+  int line = 1, posi=0, numfunc=0;
+  int  c, idfunc[50];
 
 	
 	codigo=(unsigned char*)malloc(VALMAX * sizeof(char));
@@ -150,6 +302,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
 				if (fscanf(f, "unction%c", &c0) != 1)
           error("comando invalido", line);
 
+        //idfunc[numfunc++]=&codigo[posi];
 				codigo[posi++]=0x55;
 				codigo[posi++]=0x48;
 				codigo[posi++]=0x89;
@@ -158,6 +311,9 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
 				codigo[posi++]=0x83;
 				codigo[posi++]=0xec;
 				codigo[posi++]=0x20;
+        codigo[posi++]=0x89;
+        codigo[posi++]=0x7d;
+        codigo[posi++]=0xe8;
 
         *entry = (funcp)(codigo);
         
@@ -198,7 +354,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
         if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) 
           error("comando invalido", line);
 
-        posi=posi+zret(var0, idx0, var1, idx1, posi);
+        posi=zret(var0, idx0, var1, idx1, posi);
         
 				printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
         break;
@@ -210,18 +366,6 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
         char var0 = c, c0;
         if (fscanf(f, "%d = %c",&idx0, &c0) != 2)
           error("comando invalido",line);
-
-        /*switch (c) 
-        {
-          case '$':
-          {
-            codigo[posi++]=0xbb;
-            codigo[posi++]=idx0 & 0xff;
-            codigo[posi++]=(idx0 >> 8) & 0xff;
-            codigo[posi++]=(idx0 >> 16) & 0xff;
-            codigo[posi++]=(idx0 >> 24) & 0xff;
-          }
-        }*/
 
         if (c0 == 'c') //call	
 				{ 
@@ -242,10 +386,12 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
         
 					printf("%c%d = %c%d %c %c%d\n", var0, idx0, var1, idx1, op, var2, idx2);
 
-          
-
+          posi=operacao(var1, idx1, op, var2, idx2, posi);
         }
 
+        codigo[posi++]=0x89;
+        codigo[posi++]=0x55;
+        codigo[posi++]=0xfc -4* idx0;
         break;
       }
 
@@ -257,6 +403,7 @@ void gera_codigo (FILE *f, void **code, funcp *entry)
   }
 
   *code = codigo;
+  return posi;
 }
 
 void libera_codigo(void *code)
@@ -269,23 +416,27 @@ int main(int argc, char *argv[])
   FILE *fp;
   void *code;
   funcp funcSBF;
-  int res;
+  int res, i, posi;
 
   /* Abre o arquivo para leitura */
   fp = fopen("sbf", "r");
 
   /* Gera o codigo */
-  gera_codigo(fp, &code, &funcSBF);
+  posi=gera_codigo(fp, &code, &funcSBF);
   
   if ((code == NULL) || (funcSBF == NULL)) 
     printf("Erro na geracao\n");
 
+  for(i=0;i<posi;i++)
+    printf("%x\n", codigo[i]);
+
   /* Chama a função gerada */
-  res = (*funcSBF)(1000);
+  res = (*funcSBF)(1);
   printf("%d\n", res);
 
   /* Libera a memória utilizada */
   libera_codigo(code);
+
   fclose(fp);
 
   return 0;
