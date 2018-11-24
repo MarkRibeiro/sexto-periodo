@@ -165,52 +165,131 @@ int operacao (char var1, int idx1, char op, char var2, int idx2, int posi)
 
 int zret(char var0, int idx0, char var1, int idx1, int posi)
 {
-  switch (var0)
-  {
-    case '$':
-    {
-      
-    } 
+	codigo[posi++]=0x83;
 
-    case 'v':
-    {
-      switch (idx0)
-      {
-        case 0:// -8(%rbp)
-        {
-        
-        }
+	switch (var0)
+	{
+		case '$':
+	  	{
+	  		codigo[posi++]=0xf8;
+	  		codigo[posi++]=0x00;
 
-        case 1:// -12(%rbp)
-        {
-        
-        }
+	  		switch (var1)
+	  		{
+	  			case '$':
+	  			{
+	  				codigo[posi++]=0xb8;
+	  				codigo[posi++]=idx1 & 0xff;
+					codigo[posi++]=(idx1 >> 8) & 0xff;
+					codigo[posi++]=(idx1 >> 16) & 0xff;
+					codigo[posi++]=(idx1 >> 24) & 0xff;
 
-        case 2:// -16(%rbp)
-        {
-          
-        }
+	  				break;
+	  			}
 
-        case 3:// -20(%rbp)
-        {
-          
-        }
+	  			case 'v':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xfc -4* idx1;
 
-        case 4:// -24(%rbp)
-        {
-          
-        }
 
-      }
-    } 
+	  				break;
+	  			}
 
-    case 'p':
-    {
+	  			case 'p':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xe8;
 
-      
-    } 
-  }
-  return 0;
+	  				break;
+	  			}
+	  		}
+	  		break;
+	  	}
+
+	  	case 'v':
+	  	{
+	  		codigo[posi++]=0x7d;
+	  		codigo[posi++]=0xfc -4* idx0;
+	  		codigo[posi++]=0x00;
+
+	  		switch (var1)
+	  		{
+	  			case '$':
+	  			{
+	  				codigo[posi++]=0xb8;
+	  				codigo[posi++]=idx1 & 0xff;
+					codigo[posi++]=(idx1 >> 8) & 0xff;
+					codigo[posi++]=(idx1 >> 16) & 0xff;
+					codigo[posi++]=(idx1 >> 24) & 0xff;
+
+	  				break;
+	  			}
+
+	  			case 'v':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xfc -4* idx1;
+
+	  				break;
+	  			}
+
+	  			case 'p':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xe8;
+
+	  				break;
+	  			}
+	  		}
+	  		break;
+	  	}
+	  	case 'p':
+	  	{
+	  		codigo[posi++]=0x7d;
+	  		codigo[posi++]=0xe8;
+	  		codigo[posi++]=0x00;
+
+	  		switch (var1)
+	  		{
+	  			case '$':
+	  			{
+	  				codigo[posi++]=0xb8;
+	  				codigo[posi++]=idx1 & 0xff;
+					codigo[posi++]=(idx1 >> 8) & 0xff;
+					codigo[posi++]=(idx1 >> 16) & 0xff;
+					codigo[posi++]=(idx1 >> 24) & 0xff;
+
+	  				break;
+	  			}
+
+	  			case 'v':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xfc -4* idx1;
+
+	  				break;
+	  			}
+
+	  			case 'p':
+	  			{
+	  				codigo[posi++]=0x8b;
+	  				codigo[posi++]=0x45;
+	  				codigo[posi++]=0xe8;
+
+	  				break;
+	  			}
+	  		}
+	  		break;
+	  	}
+	}
+
+	return posi;
 }
 int ret(char var0,  int idx0, int posi)
 {
@@ -285,8 +364,8 @@ int ret(char var0,  int idx0, int posi)
 
 int gera_codigo (FILE *f, void **code, funcp *entry)
 {
-  	int line = 1, posi=0; //numfunc=0;
-  	int  c; //idfunc[50];
+  	int line = 1, posi=0;//numfunc=0;
+  	int  c;//idfunc[50];
 
 	codigo=(unsigned char*)malloc(VALMAX * sizeof(char));
 
@@ -314,7 +393,6 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 		        codigo[posi++]=0xe8;
 
 		        *entry = (funcp)(codigo);
-        
 				printf("function\n");
         		break;
       		}
@@ -428,7 +506,7 @@ int main(int argc, char *argv[])
     //printf("%x\n", codigo[i]);
 
   /* Chama a função gerada */
-  res = (*funcSBF)(1);
+  res = (*funcSBF)(0);
   printf("%d\n", res);
 
   /* Libera a memória utilizada */
