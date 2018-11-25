@@ -1,5 +1,8 @@
-function	
-v4 = p0 + $7	
-zret $0	v4
+function
+v0 = $0 + $1	
+v1 = $0 + $3
+v2 = v1 + v0
+
+ret v2
 end				
    

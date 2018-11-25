@@ -1,0 +1,35 @@
+v1 = p0 + v0 ok
+v1 = p0 + p0 ok
+v1 = p0 + $1 ok
+
+v1 = v0 + v0 ok
+v1 = v0 + p0 ok
+v1 = v0 + $1 ok
+
+v1 = $1 + v0 ok
+v1 = $1 + p0 ok
+v1 = $1 + $1 ok
+
+v1 = p0 - v0 ok
+v1 = p0 - p0 ok
+v1 = p0 - $1 ok
+
+v1 = v0 - v0 ok
+v1 = v0 - p0 ok
+v1 = v0 - $1 ok
+
+v1 = $1 - v0 ok
+v1 = $1 - p0 ok
+v1 = $1 - $1 ok
+
+v1 = p0 * v0 ok
+v1 = p0 * p0 ok
+v1 = p0 * $1 ok
+
+v1 = v0 * v0 ok
+v1 = v0 * p0 ok
+v1 = v0 * $1 ok
+
+v1 = $1 * v0 ok
+v1 = $1 * p0 ok
+v1 = $1 * $1 ok
