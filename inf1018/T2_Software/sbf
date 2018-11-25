@@ -1,5 +1,5 @@
 function	
-v4 = $0 + $7	
-zret $0	p0
+v4 = p0 + $7	
+zret $0	v4
 end				
    

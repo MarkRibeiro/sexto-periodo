@@ -1,11 +1,6 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include "gera_codigo.h"
+#include"gera_codigo.h"
 
-unsigned char *codigo;
-
-int main(int argc, char *argv[]) 
+int main(void/*int argc, char *argv[]*/) 
 {
   FILE *fp;
   void *code;
@@ -21,8 +16,8 @@ int main(int argc, char *argv[])
   if ((code == NULL) || (funcSBF == NULL)) 
     printf("Erro na geracao\n");
 
-  for(i=0;i<posi;i++)
-    printf("%x\n", codigo[i]);
+  //for(i=0;i<posi;i++)
+    //printf("%x\n", codigo[i]);
 
   /* Chama a função gerada */
   res = (*funcSBF)(1);

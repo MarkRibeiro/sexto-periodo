@@ -1,3 +1,8 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
 typedef int (*funcp) (int x);
-void gera_codigo (FILE *f, void **code, funcp *entry);
-void libera_codigo (void *p);
+unsigned char *codigo;
+int gera_codigo (FILE *f, void **code, funcp *entry);
+int libera_codigo (void *p);

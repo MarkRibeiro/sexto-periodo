@@ -1,0 +1,26 @@
+function
+zret p0 $1000
+v0 = p0 + $1000
+ret v0
+end
+
+pushq %rbp				/*55*/
+movq %rsp, %rbp			/*48 89 e5*/
+subq $32, %rsp			/*48 83 ec 20*/
+movl %edi, -24(%rbp)	/*89 7d e8*/
+
+cmpl $0, -24(%rbp)
+je JMP
+
+movl  -24(%rbp), %edx	/*8b 55 e8*/
+addl  $1000, %edx		/*81 c2 e8 03 00 00*/
+movl  %edx, -4(%rbp)	/*89 55 fc*/
+movl  -4(%rbp), %eax	/*8b 45 fc*/
+
+  JMP:
+    movl $1000, %eax		
+
+
+
+
+caso 0: 55 48 89 e5 48 83 ec 20 89 7d e8? ?
