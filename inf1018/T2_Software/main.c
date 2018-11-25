@@ -17,7 +17,7 @@ int main(void/*int argc, char *argv[]*/)
     printf("Erro na geracao\n");
 
   //for(i=0;i<posi;i++)
-    //printf("%x\n", codigo[i]);
+    //printf("%x\n", code[i]);
 
   /* Chama a função gerada */
   res = (*funcSBF)(1);

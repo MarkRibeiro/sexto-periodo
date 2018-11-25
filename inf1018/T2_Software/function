@@ -13,7 +13,7 @@ cmpl $0, -24(%rbp)
 je JMP
 
 movl  -24(%rbp), %edx	/*8b 55 e8*/
-movl  $1000, %edx		/*81 c2 e8 03 00 00*/
+addl  $1000, %edx		/*81 c2 e8 03 00 00*/
 movl  %edx, -4(%rbp)	/*89 55 fc*/
 movl  -4(%rbp), %eax	/*8b 45 fc*/
 

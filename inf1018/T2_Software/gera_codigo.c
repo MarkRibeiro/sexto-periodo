@@ -177,9 +177,10 @@ int ret(char var0,  int idx0, int posi)
 		}	
 		case 'p': 
 		{
-			//p0 NAO ESTA SALVO EM -24(%rbp) ESTA EM EDI
-			codigo[posi++]=0x89;
-			codigo[posi++]=0xf8;
+			//mov -24(%rbp), %eax
+			codigo[posi++]=0x8b;
+			codigo[posi++]=0x45;
+			codigo[posi++]=0xe8;
 
 			return posi;
 		}	
@@ -189,12 +190,14 @@ int ret(char var0,  int idx0, int posi)
 
 int zret(char var0, int idx0, char var1, int idx1, int posi)
 {
+	//Primeiro byte do comando cmpl
 	codigo[posi++]=0x83;
 
 	switch (var0)
 	{
 		case '$':
 	  	{
+	  		//Demais bytes do comando .....
 	  		codigo[posi++]=0xf8;
 	  		codigo[posi++]=0x00;
 
@@ -204,9 +207,9 @@ int zret(char var0, int idx0, char var1, int idx1, int posi)
 	  			{
 	  				codigo[posi++]=0xb8;
 	  				codigo[posi++]=idx1 & 0xff;
-					codigo[posi++]=(idx1 >> 8) & 0xff;
-					codigo[posi++]=(idx1 >> 16) & 0xff;
-					codigo[posi++]=(idx1 >> 24) & 0xff;
+					  codigo[posi++]=(idx1 >> 8) & 0xff;
+					  codigo[posi++]=(idx1 >> 16) & 0xff;
+					  codigo[posi++]=(idx1 >> 24) & 0xff;
 
 	  				break;
 	  			}

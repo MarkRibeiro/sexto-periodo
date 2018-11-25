@@ -1,8 +1,7 @@
 function
-v0 = $0 + $1	
-v1 = $0 + $3
-v2 = v1 + v0
+v0 = $0 + $1
+v1 = $1 * p0	
 
-ret v2
+ret v1
 end				
    

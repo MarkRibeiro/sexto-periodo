@@ -70,3 +70,4 @@ cmpl $0, -12(%rbp)       /*83 7d f4 00*/
 cmpl $0, -16(%rbp)       /*83 7d f0 00*/
 cmpl $0, -20(%rbp)       /*83 7d ec 00*/
 cmpl $0, -24(%rbp)       /*83 7d e8 00*/
+cmpl $0, %edx  /**/
