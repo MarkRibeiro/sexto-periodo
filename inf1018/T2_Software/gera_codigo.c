@@ -1,3 +1,5 @@
+/*Mark Ribeiro - 1612043 - 3WB*/
+/*Jonny Russo - 1610608 - 3WB*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -9,15 +11,17 @@ unsigned char *codigo;
 
 static void error (const char *msg, int line);
 int ret(char var0,  int idx0, int posi);
-int zret(char var0, int idx0, char var1, int idx1, int posi);
+int zret(char var0, int idx0, char var1, int idx1, int posi, int *indice, int num);
 int operacao (char var1, int idx1, char op, char var2, int idx2, int posi);
+int call(int idx0, char var1, int idx1, int posi, int id);
 
-int gera_codigo (FILE *f, void **code, funcp *entry)
+void gera_codigo (FILE *f, void **code, funcp *entry)
 {
-	int line = 1, posi=0;//numfunc=0;
-  	int  c;//idfunc[50];
+	int line = 1, posi=0, numfunc=0;
+  	int  c, idfunc[50], indice[50], num;
 
-	codigo=(unsigned char*)malloc(VALMAX * sizeof(char));
+  	*code = (unsigned char *)malloc(VALMAX * sizeof(char));
+	codigo = (unsigned char*)*code; 
 
   while ((c = fgetc(f)) != EOF) 	
 	{
@@ -29,7 +33,10 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 				if (fscanf(f, "unction%c", &c0) != 1)
 					error("comando invalido", line);
 
-				//idfunc[numfunc++]=&codigo[posi];
+				num = 0;
+				idfunc[numfunc++]=posi;
+
+				*entry = (funcp)(&codigo[posi]);
 				//pushq %rbp
 				codigo[posi++]=0x55;
 				//movq %rsp, %rbp
@@ -46,7 +53,7 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 				codigo[posi++]=0x7d;
 				codigo[posi++]=0xe8;
 
-				*entry = (funcp)(codigo);
+				
 				printf("function\n");
 
 				break;
@@ -57,6 +64,16 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 				char c0;
 				if (fscanf(f, "nd%c", &c0) != 1)
 					error("comando invalido", line);
+
+				while(num--)
+				{
+					//Calcula o deslocamento dos zret's
+					unsigned int deslocamento=(unsigned long)&codigo[posi]-(unsigned long)&codigo[indice[num] + 4];
+					codigo[indice[num]]=deslocamento & 0xff;
+					codigo[indice[num] + 1]=(deslocamento >> 8) & 0xff;
+					codigo[indice[num] + 2]=(deslocamento >> 16) & 0xff;
+					codigo[indice[num] + 3]=(deslocamento >> 24) & 0xff;
+				}
 
 				//leave
 				codigo[posi++]=0xc9;
@@ -88,7 +105,8 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 				if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) 
 					error("comando invalido", line);
 
-				posi=zret(var0, idx0, var1, idx1, posi);
+				posi=zret(var0, idx0, var1, idx1, posi, indice, num);
+				num += 1;
 				printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
 
 				break;
@@ -108,6 +126,8 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 					if (fscanf(f, "all %d %c%d\n", &fp, &var1, &idx1) != 3)
 						error("comando invalido",line);
 
+					posi=call(idx0, var1, idx1, posi, idfunc[fp]);
+
 					printf("%c%d = call %d %c%d\n",var0, idx0, fp, var1, idx1);
 				}
 
@@ -120,13 +140,15 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 
 					printf("%c%d = %c%d %c %c%d\n", var0, idx0, var1, idx1, op, var2, idx2);
 					posi=operacao(var1, idx1, op, var2, idx2, posi);
+
+					//movl %edx, entre -4(%rbp) a -20(%rbp)
+					codigo[posi++]=0x89;
+					codigo[posi++]=0x55;
+					/*esta linha descobre o codigo de maquina de uma variavel fazendo: 
+					0xfc(Codigo de v0) - 4(espaço em bytes de cada variavel na pilha) * idx0(numero da variavel)*/
+					codigo[posi++]=0xfc -4* idx0;
 				}
-				//movl %edx, entre -4(%rbp) a -20(%rbp)
-				codigo[posi++]=0x89;
-				codigo[posi++]=0x55;
-				/*esta linha descobre o codigo de maquina de uma variavel fazendo: 
-				0xfc(Codigo de v0) - 4(espaço em bytes de cada variavel na pilha) * idx0(numero da variavel)*/
-				codigo[posi++]=0xfc -4* idx0;
+				
 																		 
 				break;
 			}
@@ -137,9 +159,6 @@ int gera_codigo (FILE *f, void **code, funcp *entry)
 		line ++;
 		fscanf(f, " ");
 	}
-
-	*code = (void*)codigo;
-	return posi;
 }
 
 static void error (const char *msg, int line)
@@ -161,7 +180,7 @@ int ret(char var0,  int idx0, int posi)
 			codigo[posi++]=(idx0 >> 16) & 0xff;
 			codigo[posi++]=(idx0 >> 24) & 0xff;
 
-			return posi;
+			break;
 		}	
 
 		case 'v':  
@@ -172,8 +191,8 @@ int ret(char var0,  int idx0, int posi)
 			/*esta linha descobre o codigo de maquina de uma variavel fazendo: 
 			0xfc(Codigo de v0) - 4(espaço em bytes de cada variavel na pilha) * idx0(numero da variavel)*/
 			codigo[posi++]=0xfc -4* idx0;
-    		
-    	return posi;
+
+			break;
 		}	
 		case 'p': 
 		{
@@ -182,139 +201,112 @@ int ret(char var0,  int idx0, int posi)
 			codigo[posi++]=0x45;
 			codigo[posi++]=0xe8;
 
-			return posi;
+			break;
 		}	
 	}
-	exit(1);
+	return posi;
 }
 
-int zret(char var0, int idx0, char var1, int idx1, int posi)
+int zret(char var0, int idx0, char var1, int idx1, int posi, int *indice, int num)
 {
-	//Primeiro byte do comando cmpl
-	codigo[posi++]=0x83;
+	posi=ret(var1, idx1, posi);
 
-	switch (var0)
+	switch(var0)
 	{
 		case '$':
-	  	{
-	  		//Demais bytes do comando .....
-	  		codigo[posi++]=0xf8;
-	  		codigo[posi++]=0x00;
+		{
+			//movl idx0, %edx
+			codigo[posi++]=0xba;
+			codigo[posi++]=idx0 & 0xff;
+			codigo[posi++]=(idx0 >> 8) & 0xff;
+			codigo[posi++]=(idx0 >> 16) & 0xff;
+			codigo[posi++]=(idx0 >> 24) & 0xff;
 
-	  		switch (var1)
-	  		{
-	  			case '$':
-	  			{
-	  				codigo[posi++]=0xb8;
-	  				codigo[posi++]=idx1 & 0xff;
-					  codigo[posi++]=(idx1 >> 8) & 0xff;
-					  codigo[posi++]=(idx1 >> 16) & 0xff;
-					  codigo[posi++]=(idx1 >> 24) & 0xff;
+			break;
+		}
 
-	  				break;
-	  			}
+		case 'v':
+		{
+			//movl -4(%rbp) a -20(%rbp), %edx
+			codigo[posi++]=0x8b;
+			codigo[posi++]=0x55;
+			codigo[posi++]=0xfc -4* idx1;
 
-	  			case 'v':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xfc -4* idx1;
+			break;
+		}
 
+		case 'p':
+		{
+			//movl -24(%rbp), %edx
+			codigo[posi++]=0x8b;
+			codigo[posi++]=0x55;
+			codigo[posi++]=0xe8;
 
-	  				break;
-	  			}
-
-	  			case 'p':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xe8;
-
-	  				break;
-	  			}
-	  		}
-	  		break;
-	  	}
-
-	  	case 'v':
-	  	{
-	  		codigo[posi++]=0x7d;
-	  		codigo[posi++]=0xfc -4* idx0;
-	  		codigo[posi++]=0x00;
-
-	  		switch (var1)
-	  		{
-	  			case '$':
-	  			{
-	  				codigo[posi++]=0xb8;
-	  				codigo[posi++]=idx1 & 0xff;
-						codigo[posi++]=(idx1 >> 8) & 0xff;
-						codigo[posi++]=(idx1 >> 16) & 0xff;
-						codigo[posi++]=(idx1 >> 24) & 0xff;
-
-	  				break;
-	  			}
-
-	  			case 'v':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xfc -4* idx1;
-
-	  				break;
-	  			}
-
-	  			case 'p':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xe8;
-
-	  				break;
-	  			}
-	  		}
-	  		break;
-	  	}
-	  	case 'p':
-	  	{
-	  		codigo[posi++]=0x7d;
-	  		codigo[posi++]=0xe8;
-	  		codigo[posi++]=0x00;
-
-	  		switch (var1)
-	  		{
-	  			case '$':
-	  			{
-	  				codigo[posi++]=0xb8;
-	  				codigo[posi++]=idx1 & 0xff;
-						codigo[posi++]=(idx1 >> 8) & 0xff;
-						codigo[posi++]=(idx1 >> 16) & 0xff;
-						codigo[posi++]=(idx1 >> 24) & 0xff;
-
-	  				break;
-	  			}
-
-	  			case 'v':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xfc -4* idx1;
-
-	  				break;
-	  			}
-
-	  			case 'p':
-	  			{
-	  				codigo[posi++]=0x8b;
-	  				codigo[posi++]=0x45;
-	  				codigo[posi++]=0xe8;
-
-	  				break;
-	  			}
-	  		}
-	  		break;
-	  	}
+			break;
+		}
 	}
+	//cmpl $0, %edx
+	codigo[posi++]=0x83;
+	codigo[posi++]=0xfa;
+	codigo[posi++]=0x00;
+	//je
+	codigo[posi++]=0x0f;
+	codigo[posi++]=0x84;
+	
+	indice[num]=posi;
+	posi += 4;
+	return posi;
+}
+
+int call(int idx0, char var1, int idx1, int posi, int id)
+{
+	int deslocamento;
+
+	switch (var1)
+	{
+		case '$':
+		{	
+		//	movl idx1, %edi
+			codigo[posi++]=0xbf;
+			codigo[posi++]=idx1 & 0xff;
+			codigo[posi++]=(idx1 >> 8) & 0xff;
+			codigo[posi++]=(idx1 >> 16) & 0xff;
+			codigo[posi++]=(idx1 >> 24) & 0xff;
+
+			break;
+		}
+
+		case 'v':
+		{	
+			//	movl -4(%rbp) a -20(%rbp), %edi
+			codigo[posi++]=0x8b;
+			codigo[posi++]=0x7d;
+			codigo[posi++]=0xfc -4* idx1;
+
+			break;
+		}
+
+		case 'p':
+		{
+			//movl -24(%rbp), %edi
+			codigo[posi++]=0x8b;
+			codigo[posi++]=0x7d;
+			codigo[posi++]=0xe8;
+
+			break;
+		}
+	}
+	//Calcula o deslocamento para a call
+	codigo[posi++]=0xe8;
+	deslocamento=(long)&codigo[id]-(long)&codigo[posi+4];
+	codigo[posi++]=deslocamento & 0xff;
+	codigo[posi++]=(deslocamento >> 8) & 0xff;
+	codigo[posi++]=(deslocamento >> 16) & 0xff;
+	codigo[posi++]=(deslocamento >> 24) & 0xff;
+	//movl eax, -4(%rbp) a -20(%rbp)
+	codigo[posi++]=0x89;
+	codigo[posi++]=0x45;
+	codigo[posi++]=0xfc -4* idx0;
 
 	return posi;
 }
