@@ -4,5 +4,5 @@
 
 typedef int (*funcp) (int x);
 unsigned char *codigo;
-void gera_codigo (FILE *f, void **code, funcp *entry);
-void libera_codigo (void *p);
+int gera_codigo (FILE *f, void **code, funcp *entry);
+int libera_codigo (void *p);

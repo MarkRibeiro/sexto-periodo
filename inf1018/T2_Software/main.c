@@ -1,33 +1,26 @@
 #include"gera_codigo.h"
 
-typedef int (*funcp) (int x);
-unsigned char *codigo;
-void gera_codigo (FILE *f, void **code, funcp *entry);
-void libera_codigo (void *p);
-
-
-int main(int argc, char *argv[]) 
+int main(void/*int argc, char *argv[]*/) 
 {
   FILE *fp;
   void *code;
   funcp funcSBF;
-  int res;
+  int res, i, posi;
 
   /* Abre o arquivo para leitura */
   fp = fopen("sbf", "r");
 
   /* Gera o codigo */
-  gera_codigo(fp, &code, &funcSBF);
+  posi=gera_codigo(fp, &code, &funcSBF);
   
   if ((code == NULL) || (funcSBF == NULL)) 
     printf("Erro na geracao\n");
 
   //for(i=0;i<posi;i++)
-    //printf("%x ,", codigo[i]);
-  //printf("\n");
+    //printf("%x\n", code[i]);
 
   /* Chama a função gerada */
-  res = (*funcSBF)(atoi(argv[2]));
+  res = (*funcSBF)(1);
   printf("%d\n", res);
 
   /* Libera a memória utilizada */
